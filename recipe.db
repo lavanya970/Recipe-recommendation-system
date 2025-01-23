@@ -1,0 +1,30 @@
+import sqlite3
+
+# Connect to SQLite database
+conn = sqlite3.connect('recipes.db')
+cursor = conn.cursor()
+
+# Create the Recipes table
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS recipes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    ingredients TEXT NOT NULL,
+    instructions TEXT NOT NULL
+)
+''')
+
+# Add sample recipes
+recipes = [
+    ("Pasta Carbonara", "pasta, eggs, bacon, parmesan, black pepper", "Boil pasta. Cook bacon. Mix eggs and cheese. Combine."),
+    ("Vegetable Stir Fry", "broccoli, carrots, soy sauce, garlic, bell peppers", "Stir fry vegetables. Add soy sauce and garlic."),
+    ("Pancakes", "flour, eggs, milk, sugar, baking powder", "Mix ingredients. Cook on a hot pan."),
+]
+
+cursor.executemany('''
+INSERT INTO recipes (name, ingredients, instructions) VALUES (?, ?, ?)
+''', recipes)
+
+conn.commit()
+conn.close()
+print("Database initialized with sample recipes.")
