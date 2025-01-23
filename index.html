@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Recommendation System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #results {
+            margin-top: 20px;
+        }
+        .recipe {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Recipe Recommendation System</h1>
+    <p>Enter ingredients you have:</p>
+    <input type="text" id="ingredients" placeholder="e.g., eggs, milk, flour">
+    <button onclick="searchRecipes()">Find Recipes</button>
+
+    <div id="results"></div>
+
+    <script>
+        async function searchRecipes() {
+            const ingredients = document.getElementById('ingredients').value.split(',').map(i => i.trim());
+            const response = await fetch('/search', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ingredients })
+            });
+            const recipes = await response.json();
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+
+            if (recipes.length > 0) {
+                recipes.forEach(recipe => {
+                    const recipeDiv = document.createElement('div');
+                    recipeDiv.classList.add('recipe');
+                    recipeDiv.innerHTML = `
+                        <h3>${recipe[0]}</h3>
+                        <p>${recipe[1]}</p>
+                    `;
+                    resultsDiv.appendChild(recipeDiv);
+                });
+            } else {
+                resultsDiv.innerHTML = '<p>No recipes found.</p>';
+            }
+        }
+    </script>
+</body>
+</html>
